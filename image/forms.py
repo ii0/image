@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
 from django import forms
+from django.utils import six
 from django.utils.safestring import mark_safe
 from django.forms.util import flatatt
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.urlresolvers import reverse
 import threading
 
@@ -14,11 +15,11 @@ COUNTER = 0
 
 class ImageCenterFormWidget(forms.Widget):
 
-    #def __init__(self, attrs=None):
-    #    super(ImageCenterFormWidget, self).__init__(attrs)
+    # def __init__(self, attrs=None):
+    #     super(ImageCenterFormWidget, self).__init__(attrs)
 
     def _format_value(self, value):
-        return unicode(value)
+        return six.text_type(value)
 
     def render(self, name, value, attrs=None):
 
@@ -29,9 +30,10 @@ class ImageCenterFormWidget(forms.Widget):
         final_attrs = self.build_attrs(attrs, name=name)
         if value != '':
             # Only add the 'value' attribute if a value is non-empty.
-            final_attrs['value'] = force_unicode(self._format_value(value))
+            final_attrs['value'] = force_text(self._format_value(value))
 
         resp = ''
+
         if getattr(value, 'image_path', None):
             try:
                 extra_parms = ""
@@ -72,6 +74,7 @@ class ImageCenterFormWidget(forms.Widget):
                         COUNTER = 0
             except AttributeError:
                 resp = 'Only available once the image has been saved'
+
 
         return mark_safe(resp)
 
